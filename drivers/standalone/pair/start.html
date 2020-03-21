@@ -1,0 +1,92 @@
+<body>
+    <ol>
+        <li data-i18n="pair.step1"></li>
+        <li data-i18n="pair.step2"></li>
+        <li data-i18n="pair.step3"></li>
+        <li data-i18n="pair.step4"></li>
+    </ol>
+
+    <div class="field row">
+        <label for="txt_name" data-i18n="settings.name"></label>
+        <input id="txt_name" type="text" value="" />
+    </div>
+
+    <div class="field row">
+        <label for="txt_ipaddress" data-i18n="settings.ipaddress"></label>
+        <input id="txt_ipaddress" type="text" value="" />
+    </div>
+
+    <div class="field row">
+        <label for="txt_username" data-i18n="settings.username"></label>
+        <input id="txt_username" type="text" value="" />
+    </div>
+
+    <div class="field row">
+        <label for="txt_password" data-i18n="settings.password"></label>
+        <input id="txt_password" type="text" value="" />
+    </div>
+
+    <div class="field row">
+        <button id="btn_apply" class="right" data-i18n="settings.apply" disabled="disabled"></button>
+    </div>
+
+    <script type="text/javascript">
+
+        function guidGenerator() {
+            var S4 = function() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            };
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+        }
+
+        Homey.setTitle(__('pair.title'))
+
+        const deviceName = document.getElementById('txt_name');
+        const ipAddress = document.getElementById('txt_ipaddress');
+        const userName = document.getElementById('txt_username');
+        const passWord = document.getElementById('txt_password');
+        var btnApply = document.getElementById('btn_apply');
+
+        deviceName.addEventListener('input', event => {
+            btnApply.disabled = (ipAddress.value === '' || userName.value === '' || passWord.value === '' || deviceName.value === '');
+        });
+
+        ipAdress.addEventListener('input', event => {
+            btnApply.disabled = (ipAddress.value === '' || userName.value === '' || passWord.value === '' || deviceName.value === '');
+        });
+
+        userName.addEventListener('input', event => {
+            btnApply.disabled = (ipAddress.value === '' || userName.value === '' || passWord.value === '' || deviceName.value === '');
+        });
+
+        passWord.addEventListener('input', event => {
+            btnApply.disabled = (ipAddress.value === '' || userName.value === '' || passWord.value === '' || deviceName.value === '');
+        });
+
+        btnApply.addEventListener('click', event => {
+            Homey.createDevice({
+                name: deviceName.value,
+
+                // the data object should contain only unique properties for the device. So a MAC address is good, an IP address is bad (can change over time)
+                data: {
+                    id: guidGenerator(),
+                },
+
+                // initial device settings that can be changed afterwards
+                settings: {
+                    ipAddress: ipAddress.value,
+                    userName: userName.value,
+                    passWord: passWord.value
+                },
+
+                // the store is dynamic and persistent storage for your device
+                store: {},
+
+            }, function(err, result) {
+                if( err ) return Homey.alert( err );
+                Homey.done();
+            });
+        });
+
+    </script>
+</body>
